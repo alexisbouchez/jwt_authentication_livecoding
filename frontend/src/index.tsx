@@ -4,6 +4,7 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
+import { config } from "dotenv";
 
 const apolloClient = new ApolloClient({
   uri: "http://localhost:5000",

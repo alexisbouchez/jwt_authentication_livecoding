@@ -1,12 +1,15 @@
 import { ApolloServer } from "apollo-server";
 import dataSource from "./dataSource";
 import { buildSchema } from "type-graphql";
-import { WildersResolver } from "./resolvers/WildersResolver";
+import { AuthResolver } from "./resolvers/AuthResolver";
+import { config } from "dotenv";
+
+config();
 
 const start = async (): Promise<void> => {
   await dataSource.initialize();
   const schema = await buildSchema({
-    resolvers: [WildersResolver],
+    resolvers: [AuthResolver],
   });
   const server = new ApolloServer({
     schema,

@@ -1,8 +1,9 @@
 import { DataSource } from "typeorm";
+import { User } from "./models/User";
 
 const dataSource = new DataSource({
   type: "postgres",
-  host: "postgres",
+  host: "localhost",
   port: 5432,
   username: "postgres",
   password: "example",
@@ -10,7 +11,7 @@ const dataSource = new DataSource({
 
   synchronize: true,
 
-  entities: [],
+  entities: [User],
 });
 
 export default dataSource;
