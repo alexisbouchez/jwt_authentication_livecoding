@@ -17,7 +17,7 @@ export const authMiddleware = async (
     return res.status(401).json({ error: "Not authenticated" });
   }
   try {
-    const decodedPayload = await jwt.verify(
+    const decodedPayload = jwt.verify(
       token,
       process.env.ACCESS_TOKEN_SECRET as string
     );

@@ -1,9 +1,9 @@
 import { useMutation } from "@apollo/client";
 import { Link, useNavigate } from "react-router-dom";
 import { SIGN_UP_MUTATION } from "../graphql/mutations/SIGN_UP_MUTATION";
+import { fetcher } from "../utils/fetcher";
 
 export const SignUpPage = () => {
-  const [mutate] = useMutation(SIGN_UP_MUTATION);
   const navigate = useNavigate();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -11,10 +11,14 @@ export const SignUpPage = () => {
     const formData = new FormData(event.currentTarget);
     const email = formData.get("email");
     const password = formData.get("password");
-    const result = await mutate({
-      variables: { email, password },
-    });
-    const token = result.data.signUp;
+    const { token } = await fetcher<{ token: string }>(
+      "POST",
+      "/api/auth/sign-up",
+      {
+        email,
+        password,
+      }
+    );
     localStorage.setItem("token", token);
     navigate("/");
   };

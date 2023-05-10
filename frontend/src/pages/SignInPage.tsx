@@ -1,20 +1,30 @@
-import { useLazyQuery } from "@apollo/client";
 import { Link, useNavigate } from "react-router-dom";
-import { SIGN_IN_QUERY } from "../graphql/queries/SIGN_IN_QUERY";
+import { fetcher } from "../utils/fetcher";
+import { useState } from "react";
 
 export const SignInPage = () => {
-  const [signIn] = useLazyQuery(SIGN_IN_QUERY);
   const navigate = useNavigate();
+  const [invalidCredentials, setInvalidCredentials] = useState(false);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const email = formData.get("email");
     const password = formData.get("password");
-    const result = await signIn({ variables: { email, password } });
-    const token = result.data.signIn;
-    localStorage.setItem("token", token);
-    navigate("/");
+    try {
+      const { token } = await fetcher<{ token: string }>(
+        "POST",
+        "/api/auth/sign-in",
+        {
+          email,
+          password,
+        }
+      );
+      localStorage.setItem("token", token);
+      navigate("/");
+    } catch (error) {
+      setInvalidCredentials(true);
+    }
   };
 
   return (
@@ -45,6 +55,10 @@ export const SignInPage = () => {
             placeholder="••••••••••"
           />
         </div>
+
+        {invalidCredentials && (
+          <p style={{ color: "red" }}>Invalid credentials</p>
+        )}
 
         <button type="submit">Sign in</button>
       </form>

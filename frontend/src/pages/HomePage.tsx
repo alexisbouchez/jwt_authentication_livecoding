@@ -1,10 +1,20 @@
-import { useQuery } from "@apollo/client";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { GET_PROFILE_QUERY } from "../graphql/queries/GET_PROFILE_QUERY";
+import { User } from "../types/User";
+import { fetcher } from "../utils/fetcher";
 
 export const HomePage = () => {
-  const response = useQuery(GET_PROFILE_QUERY);
-  console.log("response", response);
+  const [profile, setProfile] = useState<User | null>(null);
+
+  useEffect(() => {
+    async function getProfile() {
+      try {
+        const response = await fetcher<User>("GET", "/api/auth/profile");
+        setProfile(response);
+      } catch {}
+    }
+    getProfile();
+  }, []);
 
   const handleSignOut = () => {
     localStorage.removeItem("token");
@@ -14,11 +24,11 @@ export const HomePage = () => {
     <div>
       <h1>Bienvenue dans le crew Lamarr !</h1>
 
-      {response?.data?.getProfile ? (
+      {profile ? (
         <>
           <p>
             Vous êtes connecté avec l'adresse électronique suivante :{" "}
-            {response?.data?.getProfile}
+            {profile.email}
           </p>
           <button onClick={handleSignOut}>
             Cliquer ici pour vous déconnecter

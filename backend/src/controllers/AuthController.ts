@@ -56,6 +56,6 @@ export class AuthController {
 
   async getProfile(request: Request, response: Response) {
     const { password, ...user } = response.locals.user;
-    return response.json({ user });
+    return response.json(user);
   }
 }
