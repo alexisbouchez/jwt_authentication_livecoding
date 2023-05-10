@@ -1,7 +1,6 @@
 import { ApolloServer } from "apollo-server";
 import dataSource from "./dataSource";
 import { buildSchema } from "type-graphql";
-import { AuthResolver } from "./resolvers/AuthResolver";
 import { config } from "dotenv";
 
 config();
@@ -9,7 +8,7 @@ config();
 const start = async (): Promise<void> => {
   await dataSource.initialize();
   const schema = await buildSchema({
-    resolvers: [AuthResolver],
+    resolvers: [__dirname + "/resolvers/*.ts"],
   });
   const server = new ApolloServer({
     schema,
