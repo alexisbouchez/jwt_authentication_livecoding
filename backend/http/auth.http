@@ -1,0 +1,25 @@
+### Sign Up
+
+POST http://localhost:5000/api/auth/sign-up
+Content-Type: application/json
+
+{
+    "email": "jean.delafontaine@exemple.fr",
+    "password": "12345678"
+}
+
+### Sign In
+
+POST http://localhost:5000/api/auth/sign-in
+Content-Type: application/json
+
+{
+    "email": "jean.delafontaine@exemple.fr",
+    "password": "12345678"
+}
+
+### Get Profile
+
+GET http://localhost:5000/api/auth/profile
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE3LCJpYXQiOjE2ODM3MzI2NDR9.ikZJFBlB__ThfMtKZlEye5QTaQ-MhXHZcPtNcwT_OB8
