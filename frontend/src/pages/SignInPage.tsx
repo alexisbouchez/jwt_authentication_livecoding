@@ -1,13 +1,20 @@
-import { Link } from "react-router-dom";
+import { useLazyQuery } from "@apollo/client";
+import { Link, useNavigate } from "react-router-dom";
+import { SIGN_IN_QUERY } from "../graphql/queries/SIGN_IN_QUERY";
 
 export const SignInPage = () => {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const [signIn] = useLazyQuery(SIGN_IN_QUERY);
+  const navigate = useNavigate();
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const email = formData.get("email");
     const password = formData.get("password");
-    console.log("email", email);
-    console.log("password", password);
+    const result = await signIn({ variables: { email, password } });
+    const token = result.data.signIn;
+    localStorage.setItem("token", token);
+    navigate("/");
   };
 
   return (
