@@ -1,10 +1,13 @@
 import { useLazyQuery } from "@apollo/client";
 import { Link, useNavigate } from "react-router-dom";
 import { SIGN_IN_QUERY } from "../graphql/queries/SIGN_IN_QUERY";
+import { useState } from "react";
 
 export const SignInPage = () => {
   const [signIn] = useLazyQuery(SIGN_IN_QUERY);
   const navigate = useNavigate();
+
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -12,7 +15,12 @@ export const SignInPage = () => {
     const email = formData.get("email");
     const password = formData.get("password");
     const result = await signIn({ variables: { email, password } });
-    const token = result.data.signIn;
+
+    if (!result.data) {
+      setError("Invalid credentials");
+      return;
+    }
+    const token = result.data?.signIn;
     localStorage.setItem("token", token);
     navigate("/");
   };
@@ -48,6 +56,8 @@ export const SignInPage = () => {
 
         <button type="submit">Sign in</button>
       </form>
+
+      {error && <p>{error}</p>}
 
       <p>
         Don't have an account? <Link to="/sign-up">Sign up</Link>
