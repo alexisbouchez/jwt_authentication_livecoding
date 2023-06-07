@@ -11,17 +11,11 @@ export class AuthResolver {
     @Arg("email") email: string,
     @Arg("password") password: string
   ): Promise<string> {
-    const hashedPassword = await argon2.hash(password);
-
-    // Insérer un utilisateur en BDD
-    const createdUser = await User.create({
-      email,
-      password: hashedPassword,
-    }).save();
+    const createdUser = await User.create({ email, password }).save();
 
     const token = sign(
       { userId: createdUser.id },
-      process.env.ACCESS_TOKEN_SECRET as string
+      process.env.ACCESS_TOKEN_SECRET || "test-token"
     );
 
     return token;
@@ -47,7 +41,7 @@ export class AuthResolver {
 
     const token = sign(
       { userId: userFoundByEmail.id },
-      process.env.ACCESS_TOKEN_SECRET as string
+      process.env.ACCESS_TOKEN_SECRET || "test-token"
     );
 
     return token;
@@ -56,7 +50,6 @@ export class AuthResolver {
   @Authorized()
   @Query(() => String)
   async getProfile(@Ctx() context: any) {
-    console.log("user", context.user);
     return (context.user as any)?.email;
   }
 }

@@ -1,28 +1,25 @@
 import { test, expect } from "@playwright/test";
-import { describe } from "node:test";
 
-describe("Sign In", () => {
-  test("it should throw an error, when the credentials are invalid", async ({
-    page,
-  }) => {
-    await page.goto("http://localhost:3000/sign-in");
-    await page.fill('input[name="email"]', "alain.delon@exemple.fr");
-    await page.fill('input[name="password"]', "123456");
-    await page.click('button[type="submit"]');
-    await expect(page.getByText("Invalid credentials")).toBeVisible();
-  });
+test("throw an error when credentials are invalid", async ({ page }) => {
+  await page.goto("http://localhost:3000/sign-in");
+  await page
+    .getByPlaceholder("alain.delon@exemple.fr")
+    .fill("invalide@invalide.fr");
+  await page.getByPlaceholder("••••••••••").fill("trucmuche");
+  await page.getByRole("button", { name: "Sign in" }).click();
 
-  test("it should redirect to the home page, when the credentials are valid", async ({
-    page,
-  }) => {
-    await page.goto("http://localhost:3000/sign-in");
-    await page.fill('input[name="email"]', "alain.delon@exemple.fr");
-    await page.fill('input[name="password"]', "machinchose");
-    await page.click('button[type="submit"]');
-    // expect(page.url()).toBe("http://localhost:3000/");
-    // wait for the page to be redirected
-    await page.waitForURL("http://localhost:3000/");
+  // Je vérifie que je trouve un message d'erreur (il doit contenir "Invalid credentials")
+  await expect(page.getByText("Invalid credentials")).toBeVisible();
+});
 
-    expect(page.url()).toBe("http://localhost:3000/");
-  });
+test("redirect to home page when credentials are valid", async ({ page }) => {
+  await page.goto("http://localhost:3000/sign-in");
+  await page
+    .getByPlaceholder("alain.delon@exemple.fr")
+    .fill("alain.delon@exemple.fr");
+  await page.getByPlaceholder("••••••••••").fill("machinchose");
+  await page.getByRole("button", { name: "Sign in" }).click();
+  await page.waitForURL("http://localhost:3000/");
+
+  expect(page.url()).toBe("http://localhost:3000/");
 });

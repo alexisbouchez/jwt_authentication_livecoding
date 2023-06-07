@@ -3,9 +3,9 @@ export function getDisplayName(
   lastName: string,
   city?: string
 ): string {
-  if (!city) {
-    return `[?] ${firstName} ${lastName}`;
+  if (city) {
+    return `[${city}] ${firstName} ${lastName}`;
   }
 
-  return `[${city}] ${firstName} ${lastName}`;
+  return `[?] ${firstName} ${lastName}`;
 }
