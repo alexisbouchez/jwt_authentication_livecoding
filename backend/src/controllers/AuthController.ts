@@ -7,22 +7,17 @@ export class AuthController {
   async signUp(request: Request, response: Response): Promise<void> {
     const { email, password } = request.body;
 
-    const hashedPassword = await argon2.hash(password);
-
     const userFoundByEmail = await User.findOne({ where: { email } });
     if (userFoundByEmail) {
       response.status(400).json({ error: "Email already in use" });
       return;
     }
 
-    const createdUser = await User.create({
-      email,
-      password: hashedPassword,
-    }).save();
+    const createdUser = await User.create({ email, password }).save();
 
     const token = sign(
       { userId: createdUser.id },
-      process.env.ACCESS_TOKEN_SECRET as string
+      process.env.ACCESS_TOKEN_SECRET || "test-secret"
     );
 
     response.json({ token });
@@ -33,7 +28,7 @@ export class AuthController {
 
     const userFoundByEmail = await User.findOne({ where: { email } });
     if (!userFoundByEmail) {
-      response.status(400).json({ error: "Invalid credentials" });
+      response.status(401).json({ error: "Invalid credentials" });
       return;
     }
 
@@ -42,13 +37,13 @@ export class AuthController {
       password
     );
     if (!passwordValid) {
-      response.status(400).json({ error: "Invalid credentials" });
+      response.status(401).json({ error: "Invalid credentials" });
       return;
     }
 
     const token = sign(
       { userId: userFoundByEmail.id },
-      process.env.ACCESS_TOKEN_SECRET as string
+      process.env.ACCESS_TOKEN_SECRET || "test-secret"
     );
 
     response.json({ token });
